@@ -76,22 +76,31 @@ function pitchToNote(pitch) {
   return notes[value];
 }
 
+function ChordItem(props) {
+  const { Note, durationType } = props;
+  return (
+    <div>
+      {pitchToNote(Note.pitch?._text)} | {tcpMap[Note.tpc?._text]} | pitch:{" "}
+      {Note.pitch?._text} | tpc: {Note.tpc?._text} | duration:{" "}
+      {durationType._text}
+    </div>
+  );
+}
+
 function MeasureItem(props) {
   const { voice } = props;
 
-  if (!Array.isArray(voice?.Chord)) {
-    console.log("!Array.isArray(voice?.Chord)", props);
-    return null;
+  if (!voice?.Chord) {
+    console.log("!voice?.Chord", props);
+    return <pre>{JSON.stringify(props, null, 2)}</pre>;
   }
 
+  const array = Array.isArray(voice.Chord) ? voice.Chord : [voice.Chord];
+
   return (
-    <div>
-      {voice.Chord.map((item, i) => (
-        <div key={i}>
-          {pitchToNote(item.Note.pitch?._text)} | {tcpMap[item.Note.tpc?._text]}{" "}
-          | pitch: {item.Note.pitch?._text} | tpc: {item.Note.tpc?._text} |
-          duration: {item.durationType._text}
-        </div>
+    <div style={{ marginBottom: 10 }}>
+      {array.map((item, i) => (
+        <ChordItem key={i} {...item} />
       ))}
     </div>
   );
